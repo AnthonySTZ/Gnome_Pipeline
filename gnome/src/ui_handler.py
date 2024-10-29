@@ -1,4 +1,12 @@
-from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QListView
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QVBoxLayout,
+    QWidget,
+    QListView,
+    QMenu,
+    QMessageBox,
+)
+from PySide6.QtCore import Qt, QPoint
 
 
 class MainWindow(QMainWindow):
@@ -31,4 +39,47 @@ class MainWindow(QMainWindow):
             border-radius : 7px;
             }"""  # Set background color
         )
+        self.entities_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.entities_list.customContextMenuRequested.connect(
+            self.show_entities_list_context_menu
+        )
         self.main_layout.addWidget(self.entities_list)
+
+    def show_entities_list_context_menu(self, position: QPoint):
+        # Check if an item is clicked
+        index = self.entities_list.indexAt(position)
+        if not index.isValid():  # If no item is clicked
+            menu: QMenu = QMenu(self)
+            menu.setStyleSheet(
+                """.QMenu { 
+                    background-color: rgb(100, 100, 100);
+                    color : rgb(200, 200, 200);
+                    padding: 0;
+                }
+                .QMenu::item{
+                    padding-left: 20px;
+                    padding-right: 20px;
+                    padding-top: 3px;
+                    padding-bottom: 3px;
+                }
+                .QMenu::item:selected { 
+                    border: 1px solid rgb(200, 200, 200);
+                }"""
+            )
+            create_entity = menu.addAction("Create Entity")
+            open_in_explorer = menu.addAction("Open in Explorer")
+
+            # Connect menu actions
+            create_entity.triggered.connect(
+                lambda: QMessageBox.information(
+                    self, "Option Selected", "Create Entity"
+                )
+            )
+            open_in_explorer.triggered.connect(
+                lambda: QMessageBox.information(
+                    self, "Option Selected", "Open in Explorer"
+                )
+            )
+
+            # Display the menu at the mouse position
+            menu.exec(self.entities_list.mapToGlobal(position))
