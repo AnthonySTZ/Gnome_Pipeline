@@ -14,7 +14,7 @@ class MainWindow(QMainWindow):
 
         # Set central widget
         self.main_layout: QVBoxLayout = QVBoxLayout()
-        self.main_widget = QWidget()
+        self.main_widget: QWidget = QWidget()
         self.main_widget.setLayout(self.main_layout)
         self.setCentralWidget(self.main_widget)
         self.main_widget.setStyleSheet(
