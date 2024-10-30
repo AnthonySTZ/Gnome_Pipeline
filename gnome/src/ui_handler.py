@@ -11,8 +11,22 @@ from PySide6.QtWidgets import (
     QLabel,
     QTableWidget,
     QHeaderView,
+    QRadioButton,
 )
 from PySide6.QtCore import Qt, QPoint
+
+
+class NonUncheckingButton(QPushButton):
+    def __init__(self, text):
+        super().__init__(text)
+        self.setCheckable(True)
+
+    def mousePressEvent(self, event):
+        # Ignore the click event if the button is already checked
+        if self.isChecked():
+            event.ignore()  # Prevent toggling off
+        else:
+            super().mousePressEvent(event)  # Allow toggling on
 
 
 class MainWindow(QMainWindow):
@@ -20,6 +34,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setup_ui()
+        self.setup_functional()
 
     def setup_ui(self) -> None:
         # Set window properties
@@ -58,21 +73,22 @@ class MainWindow(QMainWindow):
         self.entities_radio_widget.setLayout(self.entities_radio_layout)
         self.entities_radio_widget.setStyleSheet(
             """
-            .QPushButton{ 
+            .NonUncheckingButton{ 
                 background-color: rgb(50, 50, 50);
                 color: rgb(200, 200, 200);
                 padding: 4px;
                 border: 0;
             }
-            .QPushButton:hover{
+            .NonUncheckingButton:hover{
                 background-color: rgb(30, 30, 30);}
-            .QPushButton:pressed { background-color: rgb(27, 130, 174);}"""
+            .NonUncheckingButton:checked { background-color: rgb(27, 130, 174);}
+            """
         )
 
-        self.assets_radio_btn: QPushButton = QPushButton("Assets")
+        self.assets_radio_btn: NonUncheckingButton = NonUncheckingButton("Assets")
         self.entities_radio_layout.addWidget(self.assets_radio_btn)
 
-        self.shots_radio_btn: QPushButton = QPushButton("Shots")
+        self.shots_radio_btn: NonUncheckingButton = NonUncheckingButton("Shots")
         self.entities_radio_layout.addWidget(self.shots_radio_btn)
 
         ## Add Entities List View
@@ -176,3 +192,15 @@ class MainWindow(QMainWindow):
         self.files_table_widget.horizontalHeader().setSectionResizeMode(
             2, QHeaderView.ResizeMode.Stretch
         )
+
+    def setup_functional(self) -> None:
+        self.assets_radio_btn.setChecked(True)
+
+        self.assets_radio_btn.clicked.connect(self.handle_assets_radio_btn_clicked)
+        self.shots_radio_btn.clicked.connect(self.handle_shots_radio_btn_clicked)
+
+    def handle_assets_radio_btn_clicked(self) -> None:
+        self.shots_radio_btn.setChecked(False)
+
+    def handle_shots_radio_btn_clicked(self) -> None:
+        self.assets_radio_btn.setChecked(False)
