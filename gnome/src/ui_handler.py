@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QTableWidget,
     QHeaderView,
+    QDialog,
 )
 from PySide6.QtCore import Qt, QPoint
 from dialogs import CreateEntityDialog
@@ -120,7 +121,7 @@ class MainWindow(QMainWindow):
         )
         self.entities_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         context_function: dict[str, callable] = {
-            "Create Entity": lambda: print("create entity"),
+            "Create Entity": self.create_entity_dialog,
             "Open in explorer": lambda: print("open in explorer"),
         }
         self.entities_list.customContextMenuRequested.connect(
@@ -240,3 +241,13 @@ class MainWindow(QMainWindow):
 
     def handle_shots_radio_btn_clicked(self) -> None:
         self.assets_radio_btn.setChecked(False)
+
+    def create_entity_dialog(self) -> None:
+        dialog = CreateEntityDialog(self)
+
+        dialog.exec()
+        if dialog.result() != QDialog.DialogCode.Accepted:
+            return
+
+        entity_name: str = dialog.infos["name"]
+        print(entity_name)

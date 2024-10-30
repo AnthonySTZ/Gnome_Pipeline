@@ -16,7 +16,6 @@ class CreateEntityDialog(QDialog):
         super().__init__(parent)
 
         self.setup_ui()
-        self.cancel = False
         self.infos = {}
 
     def setup_ui(self) -> None:
@@ -84,5 +83,4 @@ class CreateEntityDialog(QDialog):
         self.accept()
 
     def cancel_dialog(self) -> None:
-        self.cancel = True
         self.reject()
