@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QLabel,
     QTableWidget,
+    QHeaderView,
 )
 from PySide6.QtCore import Qt, QPoint
 
@@ -152,9 +153,24 @@ class MainWindow(QMainWindow):
             """
             .QTableWidget {
                 background-color: rgb(50, 50, 50);
+                color: rgb(200, 200, 200);
                 border : 1px solid rgb(10, 10, 10);
                 border-radius : 7px;
+            }
+            .QHeaderView::section {
+                background-color: rgb(35, 35, 35);
                 color: rgb(200, 200, 200);
+                border: 0;
+                border-left: 2px solid rgb(50, 50, 50);
+            }
+            .QHeaderView::section::first {            
+                border: 0;            
             }
             """
+        )
+        headers: list[str] = ["Software", "Version", "Comment", "Date"]
+        self.files_table_widget.setColumnCount(len(headers))
+        self.files_table_widget.setHorizontalHeaderLabels(headers)
+        self.files_table_widget.horizontalHeader().setSectionResizeMode(
+            2, QHeaderView.ResizeMode.Stretch
         )
