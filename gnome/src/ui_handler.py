@@ -65,6 +65,7 @@ class MainWindow(QMainWindow):
 
         ## Add Entities Radio Buttons
         self.entities_radio_layout: QHBoxLayout = QHBoxLayout()
+        self.entities_radio_layout.setContentsMargins(20, 0, 20, 0)
         self.entities_radio_widget: QWidget = QWidget()
         self.entities_layout.addWidget(self.entities_radio_widget)
         self.entities_radio_layout.setSpacing(2)
@@ -72,22 +73,35 @@ class MainWindow(QMainWindow):
         self.entities_radio_widget.setStyleSheet(
             """
             .NonUncheckingButton{ 
-                background-color: rgb(50, 50, 50);
+                background-color: rgb(70, 70, 70);
                 color: rgb(200, 200, 200);
-                padding: 4px;
+                padding: 3px;
                 border: 0;
             }
             .NonUncheckingButton:hover{
-                background-color: rgb(30, 30, 30);}
+                background-color: rgb(50, 50, 50);}
             .NonUncheckingButton:checked { background-color: rgb(27, 130, 174);}
             """
         )
 
         self.assets_radio_btn: NonUncheckingButton = NonUncheckingButton("Assets")
         self.entities_radio_layout.addWidget(self.assets_radio_btn)
-
+        self.assets_radio_btn.setStyleSheet(
+            """
+            .NonUncheckingButton{
+                border-top-left-radius: 7px;
+                border-bottom-left-radius: 7px;
+            }"""
+        )
         self.shots_radio_btn: NonUncheckingButton = NonUncheckingButton("Shots")
         self.entities_radio_layout.addWidget(self.shots_radio_btn)
+        self.shots_radio_btn.setStyleSheet(
+            """
+            .NonUncheckingButton{
+                border-top-right-radius: 7px;
+                border-bottom-right-radius: 7px;
+            }"""
+        )
 
         ## Add Entities List View
         self.entities_list: QListView = QListView()
