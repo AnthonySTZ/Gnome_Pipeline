@@ -162,6 +162,8 @@ class MainWindow(QMainWindow):
                 color: rgb(200, 200, 200);
                 border: 0;
                 border-left: 2px solid rgb(50, 50, 50);
+                padding-top: 3px;
+                padding-bottom: 3px;
             }
             .QHeaderView::section::first {            
                 border: 0;            
