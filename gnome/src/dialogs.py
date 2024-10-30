@@ -16,7 +16,7 @@ class CreateEntityDialog(QDialog):
         super().__init__(parent)
 
         self.setup_ui()
-        self.infos = {}
+        self.infos: dict[str, str] = {}
 
     def setup_ui(self) -> None:
         self.setWindowTitle("Create Entity")
@@ -68,7 +68,9 @@ class CreateEntityDialog(QDialog):
 
         create_btn: QPushButton = QPushButton("Create")
         cancel_btn: QPushButton = QPushButton("Cancel")
-        spacer = QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spacer: QSpacerItem = QSpacerItem(
+            0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum
+        )
         second_layout.addItem(spacer)
         second_layout.addWidget(create_btn)
         second_layout.addWidget(cancel_btn)
