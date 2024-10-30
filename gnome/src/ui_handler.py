@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
     QDialog,
 )
 from PySide6.QtCore import Qt, QPoint
-from dialogs import CreateEntityDialog
+from dialogs import CreateEntityDialog, CreateDepartmentDialog
 from context_menu import create_list_context_menu
 from project_handler import ProjectHandler
 
@@ -253,3 +253,12 @@ class MainWindow(QMainWindow):
 
         entity_name: str = dialog.infos["name"]
         self.project.create_entity_folders(entity_name)
+
+    def create_department_dialog(self, type: str) -> None:
+        dialog = CreateDepartmentDialog(type, self)
+        dialog.exec()
+        if dialog.result() != QDialog.DialogCode.Accepted:
+            return
+
+        department_name: str = dialog.infos["name"]
+        print(department_name)
