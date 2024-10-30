@@ -217,6 +217,18 @@ class MainWindow(QMainWindow):
             2, QHeaderView.ResizeMode.Stretch
         )
 
+        self.files_table_widget.setContextMenuPolicy(
+            Qt.ContextMenuPolicy.CustomContextMenu
+        )
+        context_function: dict[str, callable] = {
+            "Open in explorer": lambda: print("open in explorer"),
+        }
+        self.files_table_widget.customContextMenuRequested.connect(
+            lambda position: create_list_context_menu(
+                self.files_table_widget, context_function, self, position
+            )
+        )
+
     def setup_functional(self) -> None:
         self.assets_radio_btn.setChecked(True)
 

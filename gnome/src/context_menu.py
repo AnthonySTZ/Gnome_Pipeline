@@ -1,9 +1,9 @@
-from PySide6.QtWidgets import QListView, QMenu
+from PySide6.QtWidgets import QWidget, QMenu
 from PySide6.QtCore import QPoint
 
 
 def create_list_context_menu(
-    list_view: QListView, dict_function: dict[str, callable], parent, position: QPoint
+    list_view: QWidget, dict_function: dict[str, callable], parent, position: QPoint
 ) -> None:
     index = list_view.indexAt(position)
     if not index.isValid():  # If no item is clicked
