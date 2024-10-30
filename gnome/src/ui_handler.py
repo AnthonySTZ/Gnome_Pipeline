@@ -8,6 +8,8 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QPushButton,
     QSizePolicy,
+    QLabel,
+    QTableWidget,
 )
 from PySide6.QtCore import Qt, QPoint
 
@@ -32,6 +34,14 @@ class MainWindow(QMainWindow):
             """.QWidget { background-color: rgb(35, 35, 35);}"""  # Set background color
         )
 
+        # Setup entities UI
+        self.setup_entities_ui()
+
+        # Setup Files UI
+        self.setup_files_ui()
+
+    def setup_entities_ui(self) -> None:
+
         # Add Entities Widget
         self.entities_layout: QVBoxLayout = QVBoxLayout()
         self.entities_widget: QWidget = QWidget()
@@ -43,16 +53,19 @@ class MainWindow(QMainWindow):
         self.entities_radio_layout: QHBoxLayout = QHBoxLayout()
         self.entities_radio_widget: QWidget = QWidget()
         self.entities_layout.addWidget(self.entities_radio_widget)
-        self.entities_radio_layout.setSpacing(0)
+        self.entities_radio_layout.setSpacing(2)
         self.entities_radio_widget.setLayout(self.entities_radio_layout)
         self.entities_radio_widget.setStyleSheet(
             """
             .QPushButton{ 
-            background-color: rgb(50, 50, 50);
-            color: rgb(200, 200, 200);
+                background-color: rgb(50, 50, 50);
+                color: rgb(200, 200, 200);
+                padding: 4px;
+                border: 0;
             }
             .QPushButton:hover{
-            background-color: rgb(30, 30, 30);}"""
+                background-color: rgb(30, 30, 30);}
+            .QPushButton:pressed { background-color: rgb(27, 130, 174);}"""
         )
 
         self.assets_radio_btn: QPushButton = QPushButton("Assets")
@@ -114,3 +127,34 @@ class MainWindow(QMainWindow):
 
             # Display the menu at the mouse position
             menu.exec(self.entities_list.mapToGlobal(position))
+
+    def setup_files_ui(self) -> None:
+        # Add Files Widget
+        self.files_layout: QVBoxLayout = QVBoxLayout()
+        self.files_widget: QWidget = QWidget()
+        self.main_layout.addWidget(self.files_widget)
+        self.files_widget.setLayout(self.files_layout)
+
+        # Files Title
+        self.files_title_label: QLabel = QLabel("Files:")
+        self.files_layout.addWidget(self.files_title_label)
+        self.files_title_label.setStyleSheet(
+            """
+            .QLabel {
+                color: rgb(200, 200, 200);
+            }"""
+        )
+
+        # Add Files Table Widget
+        self.files_table_widget: QTableWidget = QTableWidget()
+        self.files_layout.addWidget(self.files_table_widget)
+        self.files_table_widget.setStyleSheet(
+            """
+            .QTableWidget {
+                background-color: rgb(50, 50, 50);
+                border : 1px solid rgb(10, 10, 10);
+                border-radius : 7px;
+                color: rgb(200, 200, 200);
+            }
+            """
+        )
