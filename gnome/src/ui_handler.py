@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QPoint
 from dialogs import CreateEntityDialog
+from context_menu import create_list_context_menu
 
 
 class NonUncheckingButton(QPushButton):
@@ -118,48 +119,15 @@ class MainWindow(QMainWindow):
             }"""  # Set background color
         )
         self.entities_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        context_function: dict[str, callable] = {
+            "Create Entity": lambda: print("create entity"),
+            "Open in explorer": lambda: print("open in explorer"),
+        }
         self.entities_list.customContextMenuRequested.connect(
-            self.show_entities_list_context_menu
+            lambda position: create_list_context_menu(
+                self.entities_list, context_function, self, position
+            )
         )
-
-    def show_entities_list_context_menu(self, position: QPoint):
-        # Check if an item is clicked
-        index = self.entities_list.indexAt(position)
-        if not index.isValid():  # If no item is clicked
-            menu: QMenu = QMenu(self)
-            menu.setStyleSheet(
-                """.QMenu { 
-                    background-color: rgb(100, 100, 100);
-                    color : rgb(200, 200, 200);
-                    padding: 0;
-                }
-                .QMenu::item{
-                    padding-left: 20px;
-                    padding-right: 20px;
-                    padding-top: 3px;
-                    padding-bottom: 3px;
-                }
-                .QMenu::item:selected { 
-                    border: 1px solid rgb(200, 200, 200);
-                }"""
-            )
-            create_entity = menu.addAction("Create Entity")
-            open_in_explorer = menu.addAction("Open in Explorer")
-
-            # Connect menu actions
-            create_entity.triggered.connect(
-                lambda: QMessageBox.information(
-                    self, "Option Selected", "Create Entity"
-                )
-            )
-            open_in_explorer.triggered.connect(
-                lambda: QMessageBox.information(
-                    self, "Option Selected", "Open in Explorer"
-                )
-            )
-
-            # Display the menu at the mouse position
-            menu.exec(self.entities_list.mapToGlobal(position))
 
     def setup_departments_ui(self) -> None:
         # Add Departments Widget
@@ -179,14 +147,26 @@ class MainWindow(QMainWindow):
         )
 
         # Add Files Table Widget
-        self.deaprtments_list_view: QListView = QListView()
-        self.departments_layout.addWidget(self.deaprtments_list_view)
-        self.deaprtments_list_view.setStyleSheet(
+        self.departments_list: QListView = QListView()
+        self.departments_layout.addWidget(self.departments_list)
+        self.departments_list.setStyleSheet(
             """.QListView {
             background-color: rgb(50, 50, 50);
             border : 1px solid rgb(10, 10, 10);
             border-radius : 7px;
             }"""  # Set background color
+        )
+        self.departments_list.setContextMenuPolicy(
+            Qt.ContextMenuPolicy.CustomContextMenu
+        )
+        context_function: dict[str, callable] = {
+            "Create Department": lambda: print("create department"),
+            "Open in explorer": lambda: print("open in explorer"),
+        }
+        self.departments_list.customContextMenuRequested.connect(
+            lambda position: create_list_context_menu(
+                self.departments_list, context_function, self, position
+            )
         )
 
     def setup_files_ui(self) -> None:
