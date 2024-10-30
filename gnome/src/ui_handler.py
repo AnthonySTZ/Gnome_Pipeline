@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QPoint
 from dialogs import CreateEntityDialog
 from context_menu import create_list_context_menu
+from project_handler import ProjectHandler
 
 
 class NonUncheckingButton(QPushButton):
@@ -31,7 +32,7 @@ class NonUncheckingButton(QPushButton):
 
 
 class MainWindow(QMainWindow):
-    def __init__(self) -> None:
+    def __init__(self, project_handler: ProjectHandler) -> None:
         super().__init__()
 
         self.setup_ui()
