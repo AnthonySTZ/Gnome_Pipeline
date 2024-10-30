@@ -34,6 +34,7 @@ class NonUncheckingButton(QPushButton):
 class MainWindow(QMainWindow):
     def __init__(self, project_handler: ProjectHandler) -> None:
         super().__init__()
+        self.project: ProjectHandler = project_handler
 
         self.setup_ui()
         self.setup_functional()
@@ -251,4 +252,4 @@ class MainWindow(QMainWindow):
             return
 
         entity_name: str = dialog.infos["name"]
-        print(entity_name)
+        self.project.create_entity_folders(entity_name)
