@@ -220,9 +220,10 @@ class CreateDepartmentDialog(QDialog):
         selection = self.files_table_widget.selectionModel()
         if not selection.hasSelection():
             return
-        selection = self.files_table_widget.item(
+        department = self.files_table_widget.item(
             selection.selectedRows()[0].row(), 1
         ).text()
+        self.infos["department"] = department
         self.accept()
 
     def cancel_dialog(self) -> None:

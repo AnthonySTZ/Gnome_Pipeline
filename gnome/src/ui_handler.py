@@ -255,10 +255,17 @@ class MainWindow(QMainWindow):
         self.project.create_entity_folders(entity_name)
 
     def create_department_dialog(self, type: str) -> None:
+        entities_selected: list = self.entities_list.selectedItems()
+        if not entities_selected:
+            return
+
+        selected_entity: str = entities_selected[0].text()
         dialog = CreateDepartmentDialog(type, self)
         dialog.exec()
         if dialog.result() != QDialog.DialogCode.Accepted:
             return
 
-        department_name: str = dialog.infos["name"]
-        print(department_name)
+        department_name: str = dialog.infos["department"]
+
+        print(selected_entity, department_name)
+        self.project.create_department_folder(selected_entity, department_name)
