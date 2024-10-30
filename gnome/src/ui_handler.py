@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QHeaderView,
 )
 from PySide6.QtCore import Qt, QPoint
+from dialogs import CreateEntityDialog
 
 
 class NonUncheckingButton(QPushButton):
@@ -50,6 +51,9 @@ class MainWindow(QMainWindow):
 
         # Setup entities UI
         self.setup_entities_ui()
+
+        # ¶ Setup Departments UI
+        self.setup_departments_ui()
 
         # Setup Files UI
         self.setup_files_ui()
@@ -156,6 +160,34 @@ class MainWindow(QMainWindow):
 
             # Display the menu at the mouse position
             menu.exec(self.entities_list.mapToGlobal(position))
+
+    def setup_departments_ui(self) -> None:
+        # Add Departments Widget
+        self.departments_layout: QVBoxLayout = QVBoxLayout()
+        self.departments_widget: QWidget = QWidget()
+        self.main_layout.addWidget(self.departments_widget)
+        self.departments_widget.setLayout(self.departments_layout)
+
+        # Departments Title
+        self.departments_title_label: QLabel = QLabel("Departments:")
+        self.departments_layout.addWidget(self.departments_title_label)
+        self.departments_title_label.setStyleSheet(
+            """
+            .QLabel {
+                color: rgb(200, 200, 200);
+            }"""
+        )
+
+        # Add Files Table Widget
+        self.deaprtments_list_view: QListView = QListView()
+        self.departments_layout.addWidget(self.deaprtments_list_view)
+        self.deaprtments_list_view.setStyleSheet(
+            """.QListView {
+            background-color: rgb(50, 50, 50);
+            border : 1px solid rgb(10, 10, 10);
+            border-radius : 7px;
+            }"""  # Set background color
+        )
 
     def setup_files_ui(self) -> None:
         # Add Files Widget
