@@ -11,9 +11,10 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QHeaderView,
     QDialog,
+    QListWidget,
 )
 from PySide6.QtCore import Qt, QPoint
-from dialogs import CreateEntityDialog, CreateDepartmentDialog
+from dialogs import CreateEntityDialog, CreateDepartmentDialog, NoFocusDelegate
 from context_menu import create_list_context_menu
 from project_handler import ProjectHandler
 
@@ -38,6 +39,8 @@ class MainWindow(QMainWindow):
 
         self.setup_ui()
         self.setup_functional()
+
+        self.update_lists()
 
     def setup_ui(self) -> None:
         # Set window properties
@@ -112,13 +115,22 @@ class MainWindow(QMainWindow):
         )
 
         ## Add Entities List View
-        self.entities_list: QListView = QListView()
+        self.entities_list: QListWidget = QListWidget()
+        self.entities_list.setItemDelegate(NoFocusDelegate())
         self.entities_layout.addWidget(self.entities_list)
         self.entities_list.setStyleSheet(
-            """.QListView {
+            """.QListWidget {
             background-color: rgb(50, 50, 50);
             border : 1px solid rgb(10, 10, 10);
             border-radius : 5px;
+            }
+            .QListWidget::item{
+            background-color: rgb(80, 80, 80);
+            color: rgb(200, 200, 200);
+            padding: 3px;
+            }
+            .QListWidget::item:selected{
+            background-color: rgb(27, 130, 174);
             }"""  # Set background color
         )
         self.entities_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
@@ -149,11 +161,11 @@ class MainWindow(QMainWindow):
             }"""
         )
 
-        # Add Files Table Widget
-        self.departments_list: QListView = QListView()
+        # Add Departments Table Widget
+        self.departments_list: QListWidget = QListWidget()
         self.departments_layout.addWidget(self.departments_list)
         self.departments_list.setStyleSheet(
-            """.QListView {
+            """.QListWidget {
             background-color: rgb(50, 50, 50);
             border : 1px solid rgb(10, 10, 10);
             border-radius : 5px;
@@ -163,7 +175,7 @@ class MainWindow(QMainWindow):
             Qt.ContextMenuPolicy.CustomContextMenu
         )
         context_function: dict[str, callable] = {
-            "Create Department": lambda: print("create department"),
+            "Create Department": self.create_department_dialog,
             "Open in explorer": lambda: print("open in explorer"),
         }
         self.departments_list.customContextMenuRequested.connect(
@@ -238,11 +250,18 @@ class MainWindow(QMainWindow):
         self.assets_radio_btn.clicked.connect(self.handle_assets_radio_btn_clicked)
         self.shots_radio_btn.clicked.connect(self.handle_shots_radio_btn_clicked)
 
+        self.entities_list.itemClicked.connect(self.update_departments)
+
     def handle_assets_radio_btn_clicked(self) -> None:
         self.shots_radio_btn.setChecked(False)
+        self.update_entities()
 
     def handle_shots_radio_btn_clicked(self) -> None:
         self.assets_radio_btn.setChecked(False)
+        self.update_entities()
+
+    def get_entity_type(self) -> str:
+        return "assets" if self.assets_radio_btn.isChecked() else "shots"
 
     def create_entity_dialog(self) -> None:
         dialog = CreateEntityDialog(self)
@@ -252,20 +271,43 @@ class MainWindow(QMainWindow):
             return
 
         entity_name: str = dialog.infos["name"]
-        self.project.create_entity_folders(entity_name)
 
-    def create_department_dialog(self, type: str) -> None:
+        self.project.create_entity_folders(self.get_entity_type(), entity_name)
+        self.update_entities()
+
+    def create_department_dialog(self) -> None:
         entities_selected: list = self.entities_list.selectedItems()
         if not entities_selected:
             return
 
         selected_entity: str = entities_selected[0].text()
-        dialog = CreateDepartmentDialog(type, self)
+        dialog = CreateDepartmentDialog(self.get_entity_type(), self)
         dialog.exec()
         if dialog.result() != QDialog.DialogCode.Accepted:
             return
 
         department_name: str = dialog.infos["department"]
+        self.project.create_department_folder(
+            self.get_entity_type(), selected_entity, department_name
+        )
+        self.update_departments()
 
-        print(selected_entity, department_name)
-        self.project.create_department_folder(selected_entity, department_name)
+    def update_entities(self) -> None:
+        entities: list[str] = self.project.get_entities(self.get_entity_type())
+        self.entities_list.clear()
+        self.entities_list.addItems(entities)
+        self.update_departments()
+
+    def update_departments(self) -> None:
+        entities_selected: list = self.entities_list.selectedItems()
+        self.departments_list.clear()
+        if not entities_selected:
+            return
+        selected_entity: str = entities_selected[0].text()
+        departments: list[str] = self.project.get_departments(
+            self.get_entity_type(), selected_entity
+        )
+        self.departments_list.addItems(departments)
+
+    def update_lists(self) -> None:
+        self.update_entities()
