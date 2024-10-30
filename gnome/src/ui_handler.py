@@ -115,7 +115,7 @@ class MainWindow(QMainWindow):
             """.QListView {
             background-color: rgb(50, 50, 50);
             border : 1px solid rgb(10, 10, 10);
-            border-radius : 7px;
+            border-radius : 5px;
             }"""  # Set background color
         )
         self.entities_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):
             """.QListView {
             background-color: rgb(50, 50, 50);
             border : 1px solid rgb(10, 10, 10);
-            border-radius : 7px;
+            border-radius : 5px;
             }"""  # Set background color
         )
         self.departments_list.setContextMenuPolicy(
@@ -195,7 +195,7 @@ class MainWindow(QMainWindow):
                 background-color: rgb(50, 50, 50);
                 color: rgb(200, 200, 200);
                 border : 1px solid rgb(10, 10, 10);
-                border-radius : 7px;
+                border-radius : 5px;
             }
             .QHeaderView::section {
                 background-color: rgb(35, 35, 35);
@@ -206,7 +206,7 @@ class MainWindow(QMainWindow):
                 padding-bottom: 3px;
             }
             .QHeaderView::section::first {            
-                border: 0;            
+                border: 0;
             }
             """
         )
