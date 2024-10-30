@@ -163,12 +163,20 @@ class MainWindow(QMainWindow):
 
         # Add Departments Table Widget
         self.departments_list: QListWidget = QListWidget()
+        self.departments_list.setItemDelegate(NoFocusDelegate())
         self.departments_layout.addWidget(self.departments_list)
         self.departments_list.setStyleSheet(
             """.QListWidget {
             background-color: rgb(50, 50, 50);
             border : 1px solid rgb(10, 10, 10);
             border-radius : 5px;
+            }.QListWidget::item{
+            background-color: rgb(80, 80, 80);
+            color: rgb(200, 200, 200);
+            padding: 3px;
+            }
+            .QListWidget::item:selected{
+            background-color: rgb(27, 130, 174);
             }"""  # Set background color
         )
         self.departments_list.setContextMenuPolicy(
