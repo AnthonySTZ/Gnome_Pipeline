@@ -11,7 +11,12 @@ from PySide2.QtWidgets import (
     QListWidget,
 )
 from PySide2.QtCore import Qt, QPoint
-from src.dialogs import CreateEntityDialog, CreateDepartmentDialog, NoFocusDelegate
+from src.dialogs import (
+    CreateEntityDialog,
+    CreateDepartmentDialog,
+    NoFocusDelegate,
+    CreateNewVersion,
+)
 from src.context_menu import create_list_context_menu
 from src.project_handler import ProjectHandler
 
@@ -241,6 +246,7 @@ class MainWindow(QMainWindow):
             Qt.ContextMenuPolicy.CustomContextMenu
         )
         context_function: dict[str, callable] = {
+            "Create new version from current": self.create_new_version,
             "Open in explorer": lambda: print("open in explorer"),
         }
         self.files_table_widget.customContextMenuRequested.connect(
@@ -271,7 +277,7 @@ class MainWindow(QMainWindow):
     def create_entity_dialog(self) -> None:
         dialog = CreateEntityDialog(self)
 
-        dialog.exec()
+        dialog.exec_()
         if dialog.result() != QDialog.DialogCode.Accepted:
             return
 
@@ -287,7 +293,7 @@ class MainWindow(QMainWindow):
 
         selected_entity: str = entities_selected[0].text()
         dialog = CreateDepartmentDialog(self.get_entity_type(), self)
-        dialog.exec()
+        dialog.exec_()
         if dialog.result() != QDialog.DialogCode.Accepted:
             return
 
@@ -316,3 +322,34 @@ class MainWindow(QMainWindow):
 
     def update_lists(self) -> None:
         self.update_entities()
+
+    def get_entity(self) -> str:
+        entities_selected: list = self.entities_list.selectedItems()
+        if not entities_selected:
+            return ""
+        return entities_selected[0].text()
+
+    def get_department(self) -> str:
+        departments_selected: list = self.departments_list.selectedItems()
+        if not departments_selected:
+            return ""
+        return departments_selected[0].text()
+
+    def create_new_version(self) -> None:
+        entity_type: str = self.get_entity_type()
+        entities_selected: str = self.get_entity()
+        if not entities_selected:
+            return
+        department_selected: str = self.get_department()
+        if not department_selected:
+            return
+        # Open Dialog
+        new_version_dialog: CreateNewVersion = CreateNewVersion(self)
+        new_version_dialog.exec_()
+        if new_version_dialog.result() != QDialog.DialogCode.Accepted:
+            return
+
+        new_version_name: str = new_version_dialog.infos["name"]
+        self.project.create_new_version(
+            entity_type, entities_selected, department_selected, new_version_name
+        )

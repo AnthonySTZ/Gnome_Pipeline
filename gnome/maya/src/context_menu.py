@@ -28,4 +28,4 @@ def create_list_context_menu(
             menu.addAction(key).triggered.connect(value)
 
         # Display the menu at the mouse position
-        menu.exec(list_view.mapToGlobal(position))
+        menu.exec_(list_view.mapToGlobal(position))
