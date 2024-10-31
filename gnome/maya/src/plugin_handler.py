@@ -23,7 +23,7 @@ def create_window(dialog: MainWindow):
     dialog.window.setObjectName(
         str(dialog.__name__)
     )  # code above uses this to ID any existing windows
-    dialog.window.setWindowTitle("Gnome " + str(dialog.__name__))
+    dialog.window.setWindowTitle("Gnome")
     dialog.window.show()
 
 
