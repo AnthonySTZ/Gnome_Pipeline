@@ -47,8 +47,7 @@ def save_maya_file(path: str, filename: str) -> None:
                 version = version_number
     version += 1
     scene_name: str = cmds.file(q=True, sn=True)
-    if not scene_name:
-        create_maya_project(path)
+    create_maya_project(path)
     filename += "v" + str(version).zfill(4)
     scene_path = os.path.join(file_path, filename)
     cmds.file(rename=scene_path)
