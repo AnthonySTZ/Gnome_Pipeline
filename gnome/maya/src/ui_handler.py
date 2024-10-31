@@ -10,6 +10,7 @@ from PySide2.QtWidgets import (
     QDialog,
     QListWidget,
     QTableWidgetItem,
+    QAbstractItemView,
 )
 from PySide2.QtCore import Qt, QPoint
 from src.dialogs import (
@@ -215,6 +216,10 @@ class MainWindow(QMainWindow):
         # Add Files Table Widget
         self.files_table_widget: QTableWidget = QTableWidget()
         self.files_table_widget.verticalHeader().setVisible(False)
+        self.files_table_widget.setItemDelegate(NoFocusDelegate())
+        self.files_table_widget.setSelectionBehavior(
+            QAbstractItemView.SelectionBehavior.SelectRows
+        )
         self.files_layout.addWidget(self.files_table_widget)
         self.files_table_widget.setStyleSheet(
             """
