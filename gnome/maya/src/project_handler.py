@@ -6,7 +6,7 @@ import time
 class ProjectHandler:
     def __init__(self, project_path):
         self.project_path: str = project_path
-
+        self.software_path: dict = {"maya": "scenes"}
         self.init_project_folders()
 
     def init_project_folders(self) -> None:
@@ -54,12 +54,12 @@ class ProjectHandler:
         files_path = os.path.join(
             self.project_path, entity_type, entity_name, department
         )
-        software_path: dict = {"maya": "scenes"}
+
         files: list[dict[str, str]] = []
         for dir in os.listdir(files_path):
             if not os.path.isdir(os.path.join(files_path, dir)):
                 continue
-            scenes_path = os.path.join(files_path, dir, software_path[dir])
+            scenes_path = os.path.join(files_path, dir, self.software_path[dir])
             if not os.path.exists(scenes_path):
                 continue
             for file in os.listdir(scenes_path):

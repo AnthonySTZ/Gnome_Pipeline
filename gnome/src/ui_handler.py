@@ -16,6 +16,8 @@ from PySide6.QtCore import Qt, QPoint
 from dialogs import CreateEntityDialog, CreateDepartmentDialog, NoFocusDelegate
 from context_menu import create_list_context_menu
 from project_handler import ProjectHandler
+import subprocess
+import os
 
 
 class NonUncheckingButton(QPushButton):
@@ -135,7 +137,7 @@ class MainWindow(QMainWindow):
         self.entities_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         context_function: dict[str, callable] = {
             "Create Entity": self.create_entity_dialog,
-            "Open in explorer": lambda: print("open in explorer"),
+            "Open in explorer": self.open_entities_in_explorer,
         }
         self.entities_list.customContextMenuRequested.connect(
             lambda position: create_list_context_menu(
@@ -183,7 +185,7 @@ class MainWindow(QMainWindow):
         )
         context_function: dict[str, callable] = {
             "Create Department": self.create_department_dialog,
-            "Open in explorer": lambda: print("open in explorer"),
+            "Open in explorer": self.open_departments_in_explorer,
         }
         self.departments_list.customContextMenuRequested.connect(
             lambda position: create_list_context_menu(
@@ -248,7 +250,7 @@ class MainWindow(QMainWindow):
             Qt.ContextMenuPolicy.CustomContextMenu
         )
         context_function: dict[str, callable] = {
-            "Open in explorer": lambda: print("open in explorer"),
+            "Open in explorer": self.open_files_in_explorer,
         }
         self.files_table_widget.customContextMenuRequested.connect(
             lambda position: create_list_context_menu(
@@ -314,6 +316,7 @@ class MainWindow(QMainWindow):
     def update_departments(self) -> None:
         entities_selected: list = self.entities_list.selectedItems()
         self.departments_list.clear()
+        self.update_files()
         if not entities_selected:
             return
         selected_entity: str = entities_selected[0].text()
@@ -321,9 +324,10 @@ class MainWindow(QMainWindow):
             self.get_entity_type(), selected_entity
         )
         self.departments_list.addItems(departments)
-        self.update_files()
 
     def update_files(self) -> None:
+        self.files_table_widget.clearContents()
+        self.files_table_widget.setRowCount(0)
         entity_type: str = self.get_entity_type()
         entities_selected: str = self.get_entity()
         if not entities_selected:
@@ -334,7 +338,7 @@ class MainWindow(QMainWindow):
         files: list[dict[str, str]] = self.project.get_files(
             entity_type, entities_selected, department_selected
         )
-        self.files_table_widget.clearContents()
+
         self.files_table_widget.setRowCount(len(files))
         for i, file_info in enumerate(files):
             software: str = file_info["software"]
@@ -363,3 +367,29 @@ class MainWindow(QMainWindow):
         if not departments_selected:
             return ""
         return departments_selected[0].text()
+
+    def open_entities_in_explorer(self) -> None:
+        entity_type = self.get_entity_type()
+        path = os.path.join(self.project.project_path, entity_type)
+        subprocess.Popen('explorer "' + path + '"')
+
+    def open_departments_in_explorer(self) -> None:
+        entity_type: str = self.get_entity_type()
+        entity_name: str = self.get_entity()
+        if not entity_name:
+            return
+        path = os.path.join(self.project.project_path, entity_type, entity_name)
+        subprocess.Popen('explorer "' + path + '"')
+
+    def open_files_in_explorer(self) -> None:
+        entity_type: str = self.get_entity_type()
+        entity_name: str = self.get_entity()
+        if not entity_name:
+            return
+        department_name: str = self.get_department()
+        if not department_name:
+            return
+        path = os.path.join(
+            self.project.project_path, entity_type, entity_name, department_name
+        )
+        subprocess.Popen('explorer "' + path + '"')
