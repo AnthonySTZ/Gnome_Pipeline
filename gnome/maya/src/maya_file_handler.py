@@ -37,9 +37,19 @@ def create_maya_project(project_path):
 
 
 def save_maya_file(path: str, filename: str) -> None:
-    file_path = os.path.join(path, "scenes", filename + "v0001")
-    filename = cmds.file(q=True, sn=True)
-    if not filename:
+    version = 1
+    file_path = os.path.join(path, "scenes")
+
+    for file in os.listdir(file_path):
+        if file.startswith(filename) and (file.endswith(".ma") or file.endswith(".mb")):
+            version_number = int(file[len(filename) + 1 : -3])
+            if version_number > version:
+                version = version_number
+    version += 1
+    scene_name: str = cmds.file(q=True, sn=True)
+    if not scene_name:
         create_maya_project(path)
-        cmds.file(rename=file_path)
-        cmds.file(save=True)
+    filename += "v" + str(version).zfill(4)
+    scene_path = os.path.join(file_path, filename)
+    cmds.file(rename=scene_path)
+    cmds.file(save=True)

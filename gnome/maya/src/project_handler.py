@@ -39,14 +39,14 @@ class ProjectHandler:
         return departments
 
     def create_new_version(
-        self, entity_type: str, entity_name: str, department: str, version_name: str
+        self, entity_type: str, entity_name: str, department: str
     ) -> None:
         department_path = os.path.join(
             self.project_path, entity_type, entity_name, department
         )
         maya_path = os.path.join(department_path, "maya")
         os.makedirs(maya_path, exist_ok=True)
-        save_maya_file(maya_path, version_name)
+        save_maya_file(maya_path, entity_name)
 
     def get_files(
         self, entity_type: str, entity_name: str, department: str
@@ -80,5 +80,4 @@ class ProjectHandler:
                     "date": file_date,
                 }
                 files.append(file_infos)
-                print(os.path.getctime(file_path))
         return files

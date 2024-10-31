@@ -219,6 +219,9 @@ class MainWindow(QMainWindow):
         self.files_table_widget: QTableWidget = QTableWidget()
         self.files_table_widget.verticalHeader().setVisible(False)
         self.files_table_widget.setItemDelegate(NoFocusDelegate())
+        self.files_table_widget.setEditTriggers(
+            QAbstractItemView.EditTrigger.NoEditTriggers
+        )
         self.files_table_widget.setSelectionBehavior(
             QAbstractItemView.SelectionBehavior.SelectRows
         )
@@ -345,6 +348,7 @@ class MainWindow(QMainWindow):
             entity_type, entities_selected, department_selected
         )
 
+        files = sorted(files, key=lambda file: file["version"])  # Sort files by version
         self.files_table_widget.setRowCount(len(files))
         for i, file_info in enumerate(files):
             software: str = file_info["software"]
@@ -376,22 +380,15 @@ class MainWindow(QMainWindow):
 
     def create_new_version(self) -> None:
         entity_type: str = self.get_entity_type()
-        entities_selected: str = self.get_entity()
-        if not entities_selected:
+        entity_name: str = self.get_entity()
+        if not entity_name:
             return
         department_selected: str = self.get_department()
         if not department_selected:
             return
-        # Open Dialog
-        new_version_dialog: CreateNewVersion = CreateNewVersion(self)
-        new_version_dialog.exec_()
-        if new_version_dialog.result() != QDialog.DialogCode.Accepted:
-            return
 
-        new_version_name: str = new_version_dialog.infos["name"]
-        self.project.create_new_version(
-            entity_type, entities_selected, department_selected, new_version_name
-        )
+        self.project.create_new_version(entity_type, entity_name, department_selected)
+        self.update_files()
 
     def open_entities_in_explorer(self) -> None:
         entity_type = self.get_entity_type()

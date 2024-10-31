@@ -69,5 +69,4 @@ class ProjectHandler:
                     "date": file_date,
                 }
                 files.append(file_infos)
-                print(os.path.getctime(file_path))
         return files

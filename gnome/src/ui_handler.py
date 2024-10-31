@@ -213,6 +213,9 @@ class MainWindow(QMainWindow):
         # Add Files Table Widget
         self.files_table_widget: QTableWidget = QTableWidget()
         self.files_table_widget.verticalHeader().setVisible(False)
+        self.files_table_widget.setEditTriggers(
+            QAbstractItemView.EditTrigger.NoEditTriggers
+        )
         self.files_table_widget.setItemDelegate(NoFocusDelegate())
         self.files_table_widget.setSelectionBehavior(
             QAbstractItemView.SelectionBehavior.SelectRows
@@ -340,6 +343,7 @@ class MainWindow(QMainWindow):
         )
 
         self.files_table_widget.setRowCount(len(files))
+        files = sorted(files, key=lambda file: file["version"])  # Sort files by version
         for i, file_info in enumerate(files):
             software: str = file_info["software"]
             version: str = file_info["version"]
