@@ -245,6 +245,10 @@ class MainWindow(QMainWindow):
             .QHeaderView::section::first {            
                 border: 0;
             }
+            .QTableWidget::item{
+                padding-left: 10px;
+                padding-right: 10px;
+                border: 0px;}
             """
         )
         headers: list[str] = ["Software", "Version", "Comment", "Date"]
