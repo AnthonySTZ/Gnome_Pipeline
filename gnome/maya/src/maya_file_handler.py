@@ -37,7 +37,7 @@ def create_maya_project(project_path):
 
 
 def save_maya_file(path: str, filename: str) -> None:
-    file_path = os.path.join(path, "scenes", filename)
+    file_path = os.path.join(path, "scenes", filename + "v0001")
     filename = cmds.file(q=True, sn=True)
     if not filename:
         create_maya_project(path)

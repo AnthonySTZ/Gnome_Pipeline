@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
     QHeaderView,
     QDialog,
     QListWidget,
+    QTableWidgetItem,
 )
 from PySide6.QtCore import Qt, QPoint
 from dialogs import CreateEntityDialog, CreateDepartmentDialog, NoFocusDelegate
@@ -208,6 +209,7 @@ class MainWindow(QMainWindow):
 
         # Add Files Table Widget
         self.files_table_widget: QTableWidget = QTableWidget()
+        self.files_table_widget.verticalHeader().setVisible(False)
         self.files_layout.addWidget(self.files_table_widget)
         self.files_table_widget.setStyleSheet(
             """
@@ -256,6 +258,7 @@ class MainWindow(QMainWindow):
         self.shots_radio_btn.clicked.connect(self.handle_shots_radio_btn_clicked)
 
         self.entities_list.itemClicked.connect(self.update_departments)
+        self.departments_list.itemClicked.connect(self.update_files)
 
     def handle_assets_radio_btn_clicked(self) -> None:
         self.shots_radio_btn.setChecked(False)
@@ -313,6 +316,45 @@ class MainWindow(QMainWindow):
             self.get_entity_type(), selected_entity
         )
         self.departments_list.addItems(departments)
+        self.update_files()
+
+    def update_files(self) -> None:
+        entity_type: str = self.get_entity_type()
+        entities_selected: str = self.get_entity()
+        if not entities_selected:
+            return
+        department_selected: str = self.get_department()
+        if not department_selected:
+            return
+        files: list[dict[str, str]] = self.project.get_files(
+            entity_type, entities_selected, department_selected
+        )
+        self.files_table_widget.clearContents()
+        self.files_table_widget.setRowCount(len(files))
+        for i, file_info in enumerate(files):
+            software: str = file_info["software"]
+            version: str = file_info["version"]
+            comment: str = file_info["comment"]
+            date: str = file_info["date"]
+            self.files_table_widget.setItem(i, 0, QTableWidgetItem(software))
+            self.files_table_widget.setItem(i, 1, QTableWidgetItem(version))
+            self.files_table_widget.setItem(i, 2, QTableWidgetItem(comment))
+            self.files_table_widget.setItem(i, 3, QTableWidgetItem(date))
+        self.files_table_widget.resizeColumnToContents(0)
+        self.files_table_widget.resizeColumnToContents(1)
+        self.files_table_widget.resizeColumnToContents(3)
 
     def update_lists(self) -> None:
         self.update_entities()
+
+    def get_entity(self) -> str:
+        entities_selected: list = self.entities_list.selectedItems()
+        if not entities_selected:
+            return ""
+        return entities_selected[0].text()
+
+    def get_department(self) -> str:
+        departments_selected: list = self.departments_list.selectedItems()
+        if not departments_selected:
+            return ""
+        return departments_selected[0].text()

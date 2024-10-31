@@ -1,4 +1,5 @@
 import os
+import time
 
 
 class ProjectHandler:
@@ -35,3 +36,38 @@ class ProjectHandler:
             return []
         departments = [f for f in os.listdir(department_path)]
         return departments
+
+    def get_files(
+        self, entity_type: str, entity_name: str, department: str
+    ) -> list[dict[str, str]]:
+        files_path = os.path.join(
+            self.project_path, entity_type, entity_name, department
+        )
+        software_path: dict = {"maya": "scenes"}
+        files: list[dict[str, str]] = []
+        for dir in os.listdir(files_path):
+            if not os.path.isdir(os.path.join(files_path, dir)):
+                continue
+            scenes_path = os.path.join(files_path, dir, software_path[dir])
+            if not os.path.exists(scenes_path):
+                continue
+            for file in os.listdir(scenes_path):
+                file_path: str = os.path.join(scenes_path, file)
+                if os.path.isdir(file_path):
+                    continue
+                file_date: str = time.strftime(
+                    "%Y-%m-%d %H:%M:%S",
+                    time.strptime(time.ctime(os.path.getctime(file_path))),
+                )
+                file_version: str = file[
+                    -6 - file[::-1].index(".") : -file[::-1].index(".") - 1
+                ]
+                file_infos: dict[str, str] = {
+                    "software": dir,
+                    "version": file_version,
+                    "comment": "",
+                    "date": file_date,
+                }
+                files.append(file_infos)
+                print(os.path.getctime(file_path))
+        return files
