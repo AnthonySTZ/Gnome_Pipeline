@@ -17,7 +17,7 @@ from src.dialogs import (
     CreateEntityDialog,
     CreateDepartmentDialog,
     NoFocusDelegate,
-    CreateNewVersion,
+    CreateNewVersionDialog,
 )
 from src.context_menu import create_list_context_menu
 from src.project_handler import ProjectHandler
@@ -390,8 +390,17 @@ class MainWindow(QMainWindow):
         department_selected: str = self.get_department()
         if not department_selected:
             return
+        # Open Coment Dialog
+        dialog = CreateNewVersionDialog(self)
 
-        self.project.create_new_version(entity_type, entity_name, department_selected)
+        dialog.exec_()
+        if dialog.result() != QDialog.DialogCode.Accepted:
+            return
+
+        comment: str = dialog.infos["comment"]
+        self.project.create_new_version(
+            entity_type, entity_name, department_selected, comment
+        )
         self.update_files()
 
     def open_entities_in_explorer(self) -> None:

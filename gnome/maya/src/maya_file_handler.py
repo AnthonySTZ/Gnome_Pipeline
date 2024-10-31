@@ -1,5 +1,6 @@
 import os
 import maya.cmds as cmds
+import json
 
 
 def create_maya_project(project_path):
@@ -36,7 +37,7 @@ def create_maya_project(project_path):
     cmds.workspace(saveWorkspace=True)
 
 
-def save_maya_file(path: str, filename: str) -> None:
+def save_maya_file(path: str, filename: str, comment: str) -> None:
     version = 1
     file_path = os.path.join(path, "scenes")
 
@@ -46,9 +47,18 @@ def save_maya_file(path: str, filename: str) -> None:
             if version_number > version:
                 version = version_number
     version += 1
-    scene_name: str = cmds.file(q=True, sn=True)
     create_maya_project(path)
     filename += "v" + str(version).zfill(4)
     scene_path = os.path.join(file_path, filename)
     cmds.file(rename=scene_path)
     cmds.file(save=True)
+    infos_path = os.path.join(file_path, "infos.json")
+    add_comment_to_file(infos_path, version, comment)
+
+
+def add_comment_to_file(file_path: str, version: int, comment: str) -> None:
+    with open(file_path, "r") as f:
+        data = json.load(f)
+    data[version] = {"comment": comment}
+    with open(file_path, "w") as f:
+        json.dump(data, f)

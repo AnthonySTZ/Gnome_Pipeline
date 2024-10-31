@@ -1,11 +1,12 @@
 import os
 import time
+import json
 
 
 class ProjectHandler:
     def __init__(self, project_path):
         self.project_path: str = project_path
-
+        self.software_path: dict = {"maya": "scenes"}
         self.init_project_folders()
 
     def init_project_folders(self) -> None:
@@ -43,17 +44,19 @@ class ProjectHandler:
         files_path = os.path.join(
             self.project_path, entity_type, entity_name, department
         )
-        software_path: dict = {"maya": "scenes"}
+
         files: list[dict[str, str]] = []
         for dir in os.listdir(files_path):
             if not os.path.isdir(os.path.join(files_path, dir)):
                 continue
-            scenes_path = os.path.join(files_path, dir, software_path[dir])
+            scenes_path = os.path.join(files_path, dir, self.software_path[dir])
             if not os.path.exists(scenes_path):
                 continue
             for file in os.listdir(scenes_path):
                 file_path: str = os.path.join(scenes_path, file)
                 if os.path.isdir(file_path):
+                    continue
+                if not (file_path.endswith(".ma") or file_path.endswith(".mb")):
                     continue
                 file_date: str = time.strftime(
                     "%Y-%m-%d %H:%M:%S",
@@ -62,10 +65,18 @@ class ProjectHandler:
                 file_version: str = file[
                     -6 - file[::-1].index(".") : -file[::-1].index(".") - 1
                 ]
+                infos_path = os.path.join(scenes_path, "infos.json")
+                comment = ""
+                if os.path.exists(infos_path):
+                    with open(infos_path, "r") as f:
+                        comments = json.load(f)
+                        version = str(int(file_version[1:]))
+                        if version in comments:
+                            comment = comments[version]["comment"]
                 file_infos: dict[str, str] = {
                     "software": dir,
                     "version": file_version,
-                    "comment": "",
+                    "comment": comment,
                     "date": file_date,
                 }
                 files.append(file_infos)

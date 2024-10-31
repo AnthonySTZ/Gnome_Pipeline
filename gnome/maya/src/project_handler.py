@@ -1,6 +1,7 @@
 import os
 from src.maya_file_handler import save_maya_file
 import time
+import json
 
 
 class ProjectHandler:
@@ -39,14 +40,18 @@ class ProjectHandler:
         return departments
 
     def create_new_version(
-        self, entity_type: str, entity_name: str, department: str
+        self, entity_type: str, entity_name: str, department: str, comment: str
     ) -> None:
         department_path = os.path.join(
             self.project_path, entity_type, entity_name, department
         )
         maya_path = os.path.join(department_path, "maya")
         os.makedirs(maya_path, exist_ok=True)
-        save_maya_file(maya_path, entity_name)
+        files_infos_path: str = os.path.join(maya_path, "infos.json")
+        if not os.path.exists(files_infos_path):
+            with open(files_infos_path, "w") as f:
+                f.write(r"{}")
+        save_maya_file(maya_path, entity_name, comment)
 
     def get_files(
         self, entity_type: str, entity_name: str, department: str
@@ -66,6 +71,8 @@ class ProjectHandler:
                 file_path: str = os.path.join(scenes_path, file)
                 if os.path.isdir(file_path):
                     continue
+                if not (file_path.endswith(".ma") or file_path.endswith(".mb")):
+                    continue
                 file_date: str = time.strftime(
                     "%Y-%m-%d %H:%M:%S",
                     time.strptime(time.ctime(os.path.getctime(file_path))),
@@ -73,10 +80,18 @@ class ProjectHandler:
                 file_version: str = file[
                     -6 - file[::-1].index(".") : -file[::-1].index(".") - 1
                 ]
+                infos_path = os.path.join(scenes_path, "infos.json")
+                comment = ""
+                if os.path.exists(infos_path):
+                    with open(infos_path, "r") as f:
+                        comments = json.load(f)
+                        version = str(int(file_version[1:]))
+                        if version in comments:
+                            comment = comments[version]["comment"]
                 file_infos: dict[str, str] = {
                     "software": dir,
                     "version": file_version,
-                    "comment": "",
+                    "comment": comment,
                     "date": file_date,
                 }
                 files.append(file_infos)
