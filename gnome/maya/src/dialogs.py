@@ -14,6 +14,8 @@ from PySide2.QtWidgets import (
     QStyledItemDelegate,
     QStyleOptionViewItem,
     QStyle,
+    QComboBox,
+    QCheckBox,
 )
 
 from PySide2 import QtGui, QtCore
@@ -299,6 +301,97 @@ class CreateNewVersionDialog(QDialog):
 
     def create_entity(self) -> None:
         self.infos["comment"] = self.comment_line_edit.text()
+        self.accept()
+
+    def cancel_dialog(self) -> None:
+        self.reject()
+
+
+class ExportDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setup_ui()
+        self.infos: dict[str, str] = {}
+
+    def setup_ui(self) -> None:
+        self.setWindowTitle("Create Version")
+        self.resize(300, 100)
+
+        self.setAutoFillBackground(True)
+        self.setStyleSheet(
+            """background-color: rgb(50, 50, 50);
+                color: rgb(200, 200, 200);
+                """  # Set background color
+        )
+
+        main_layout = QVBoxLayout()
+        self.setLayout(main_layout)
+
+        first_layout: QHBoxLayout = QHBoxLayout()
+        first_widget: QWidget = QWidget()
+        first_widget.setLayout(first_layout)
+        main_layout.addWidget(first_widget)
+
+        self.format_label: QLabel = QLabel("Format:")
+        self.format_combo: QComboBox = QComboBox()
+        self.format_combo.addItem(".abc")
+        self.format_combo.addItem(".usda")
+        self.format_combo.setStyleSheet(
+            """
+                .QComboBox{
+                    background-color: rgb(80, 80, 80);
+                }"""
+        )
+        first_layout.addWidget(self.format_label)
+        first_layout.addWidget(self.format_combo)
+
+        second_layout: QHBoxLayout = QHBoxLayout()
+        second_widget: QWidget = QWidget()
+        second_widget.setLayout(second_layout)
+        main_layout.addWidget(second_widget)
+
+        self.export_sel_label: QLabel = QLabel("Export selection:")
+        self.export_sel_check: QCheckBox = QCheckBox()
+        self.export_sel_check.setStyleSheet(
+            """
+                QCheckBox::indicator {
+                    width: 15px;
+                    height: 15px;}
+            """
+        )
+        second_layout.addWidget(self.export_sel_label)
+        second_layout.addWidget(self.export_sel_check)
+
+        last_layout: QHBoxLayout = QHBoxLayout()
+        last_widget: QWidget = QWidget()
+        last_widget.setStyleSheet(
+            """
+            .QPushButton{background-color: rgb(80, 80, 80);
+                        border: 2px solide rgb(10, 10, 10);
+                        border-radius: 5px;
+                        padding: 5px;}
+            .QPushButton::pressed{background-color: rgb(50, 50, 50);}
+            """
+        )
+        last_widget.setLayout(last_layout)
+        main_layout.addWidget(last_widget)
+
+        export_btn: QPushButton = QPushButton("Export")
+        cancel_btn: QPushButton = QPushButton("Cancel")
+        spacer: QSpacerItem = QSpacerItem(
+            0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum
+        )
+        last_layout.addItem(spacer)
+        last_layout.addWidget(export_btn)
+        last_layout.addWidget(cancel_btn)
+
+        export_btn.clicked.connect(self.export)
+        cancel_btn.clicked.connect(self.cancel_dialog)
+
+    def export(self) -> None:
+        self.infos["format"] = self.format_combo.currentText()
+        self.infos["export_selection"] = self.export_sel_check.isChecked()
         self.accept()
 
     def cancel_dialog(self) -> None:

@@ -13,6 +13,7 @@ from PySide2.QtWidgets import (
     QAbstractItemView,
     QSpacerItem,
     QSizePolicy,
+    QMessageBox,
 )
 from PySide2.QtCore import Qt, QPoint
 from src.dialogs import (
@@ -20,6 +21,7 @@ from src.dialogs import (
     CreateDepartmentDialog,
     NoFocusDelegate,
     CreateNewVersionDialog,
+    ExportDialog,
 )
 from src.context_menu import create_list_context_menu
 from src.project_handler import ProjectHandler
@@ -329,6 +331,8 @@ class MainWindow(QMainWindow):
         self.departments_list.itemClicked.connect(self.update_files)
         self.files_table_widget.cellDoubleClicked.connect(self.files_double_clicked)
 
+        self.export_button.clicked.connect(self.export_event)
+
     def handle_assets_radio_btn_clicked(self) -> None:
         self.shots_radio_btn.setChecked(False)
         self.update_entities()
@@ -482,3 +486,21 @@ class MainWindow(QMainWindow):
 
     def files_double_clicked(self, row: int, column: int) -> None:
         self.project.open_file(self.files[row])
+
+    def export_event(self) -> None:
+        dialog: ExportDialog = ExportDialog(self)
+        dialog.exec_()
+        print(dialog.infos)
+        return
+        res: str = self.project.export_event()
+        if res == "success":
+            QMessageBox.information(self, "Export", "Event exported successfully")
+            return
+        if res == "scene_not_saved_in_project":
+            QMessageBox.critical(
+                self,
+                "Export",
+                "No scene saved in the project. Please save the scene first",
+            )
+            return
+        QMessageBox.critical(self, "Export", "Failed to export event")

@@ -104,3 +104,8 @@ def open_maya_scene(file_path: str):
         cmds.file(file_path, open=True)
     except RuntimeError as e:
         QMessageBox.warning("Error", str(e))
+
+
+def get_scene() -> str:
+    file_path: str = cmds.file(query=True, sceneName=True)
+    return file_path

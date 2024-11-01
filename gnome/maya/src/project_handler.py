@@ -1,5 +1,5 @@
 import os
-from src.maya_file_handler import save_maya_file, open_maya_scene
+from src.maya_file_handler import save_maya_file, open_maya_scene, get_scene
 import time
 import json
 
@@ -102,3 +102,25 @@ class ProjectHandler:
         software: str = file["software"]
         if software == "maya":
             open_maya_scene(file["path"])
+
+    def export_event(self) -> str:
+        scene_path: str = get_scene().replace("/", "\\")
+        if not scene_path:
+            return "scene_not_saved_in_project"
+        infos: dict[str, str] = self.get_file_project_infos(scene_path)
+        if infos == {}:
+            return "scene_not_saved_in_project"
+
+        print(infos)
+        return "success"
+
+    def get_file_project_infos(self, file_path: str) -> dict[str, str]:
+        infos: dict[str, str] = {}
+        if not file_path.startswith(self.project_path):
+            return infos
+        parts = file_path[len(self.project_path) :].split(os.sep)
+        infos["entity_type"] = parts[1]
+        infos["entity_name"] = parts[2]
+        infos["department"] = parts[3]
+        infos["software"] = parts[4]
+        return infos
