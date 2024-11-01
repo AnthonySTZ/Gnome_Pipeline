@@ -32,3 +32,15 @@ def add_layer(root_layer: Sdf.Layer, sub_layer_path: str) -> Sdf.Layer:
         sub_layer.identifier
     )  # Append the sublayer to the root_layer
     return sub_layer
+
+
+def get_layers(root_layer: Sdf.Layer) -> list[Sdf.Layer]:
+    return root_layer.subLayerPaths
+
+
+def remove_layer(root_layer: Sdf.Layer, sub_layer_path: str):
+    if sub_layer_path in root_layer.subLayerPaths:
+        # Remove the sublayer
+        root_layer.subLayerPaths.remove(sub_layer_path)
+        # Save the root layer to apply changes
+        root_layer.Save()

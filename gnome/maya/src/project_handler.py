@@ -2,7 +2,13 @@ import os
 from src.maya_file_handler import save_maya_file, open_maya_scene, get_scene, export
 import time
 import json
-from src.usd_handler import create_new_stage, save_stage, add_layer
+from src.usd_handler import (
+    create_new_stage,
+    save_stage,
+    add_layer,
+    get_layers,
+    remove_layer,
+)
 
 
 class ProjectHandler:
@@ -147,6 +153,13 @@ class ProjectHandler:
         full_export_path: str = res
         if export_infos["usd"]:
             stage, stage_path = create_new_stage(usd_path, infos["entity_name"])
+            for layer in get_layers(stage.GetRootLayer()):
+                if (
+                    layer.lower()
+                    .replace("\\", "/")
+                    .startswith(export_path.lower().replace("\\", "/"))
+                ):
+                    remove_layer(stage.GetRootLayer(), layer)
             add_layer(stage.GetRootLayer(), full_export_path)
             save_stage(stage)
         return "success"
