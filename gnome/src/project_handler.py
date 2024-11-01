@@ -28,18 +28,24 @@ class ProjectHandler:
         entities_path = os.path.join(self.project_path, entities_type)
         if not os.path.exists(entities_path):
             return []
-        entities = [f for f in os.listdir(entities_path)]
+        entities = [
+            f
+            for f in os.listdir(entities_path)
+            if os.path.isdir(os.path.join(entities_path, f))
+        ]
         return entities
 
     def get_departments(self, entity_type: str, entity_name: str) -> list[str]:
         department_path = os.path.join(self.project_path, entity_type, entity_name)
         if not os.path.exists(department_path):
             return []
-        departments = []
-        for f in os.listdir(department_path):
-            if not os.path.isdir(os.path.join(department_path, f)):
-                continue
-            departments.append(f)
+        departments = [
+            [
+                f
+                for f in os.listdir(department_path)
+                if os.path.isdir(os.path.join(department_path, f))
+            ]
+        ]
         return departments
 
     def get_files(
