@@ -363,6 +363,23 @@ class ExportDialog(QDialog):
         second_layout.addWidget(self.export_sel_label)
         second_layout.addWidget(self.export_sel_check)
 
+        third_layout: QHBoxLayout = QHBoxLayout()
+        third_widget: QWidget = QWidget()
+        third_widget.setLayout(third_layout)
+        main_layout.addWidget(third_widget)
+
+        self.add_usd_label: QLabel = QLabel("Add to USD:")
+        self.add_usd_check: QCheckBox = QCheckBox()
+        self.add_usd_check.setStyleSheet(
+            """
+                QCheckBox::indicator {
+                    width: 15px;
+                    height: 15px;}
+            """
+        )
+        third_layout.addWidget(self.add_usd_label)
+        third_layout.addWidget(self.add_usd_check)
+
         last_layout: QHBoxLayout = QHBoxLayout()
         last_widget: QWidget = QWidget()
         last_widget.setStyleSheet(
@@ -392,6 +409,7 @@ class ExportDialog(QDialog):
     def export(self) -> None:
         self.infos["format"] = self.format_combo.currentText()
         self.infos["export_selection"] = self.export_sel_check.isChecked()
+        self.infos["usd"] = self.add_usd_check.isChecked()
         self.accept()
 
     def cancel_dialog(self) -> None:

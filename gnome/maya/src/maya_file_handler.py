@@ -109,3 +109,37 @@ def open_maya_scene(file_path: str):
 def get_scene() -> str:
     file_path: str = cmds.file(query=True, sceneName=True)
     return file_path
+
+
+def export(file_path: str, filename: str, format: str, export_selection: bool) -> str:
+    if export_selection:
+        # Get a list of selected objects
+        selected_objects = cmds.ls(selection=True)
+
+        if len(selected_objects) == 0:
+            cmds.warning("Please select and object to export")
+            return "No selected"
+    else:
+        selected_objects = cmds.ls(assemblies=True)
+
+    # Check version
+    version = 1
+    for file in os.listdir(file_path):
+        if file.startswith(filename):
+            version_number = int(file[len(filename) + 1 : -3])
+            if version_number > version:
+                version = version_number
+    full_path = os.path.join(
+        file_path, filename + "v" + str(version).zfill(4) + format
+    ).replace("\\", "/")
+    export_cmd = "-frameRange 1 1"
+
+    # Add each root object's path to the export command
+    for obj in selected_objects:
+        export_cmd += " -root " + obj
+
+    # Specify the file output path
+    export_cmd += " -file '" + full_path + "'"
+    print(export_cmd)
+    cmds.AbcExport(j=export_cmd)
+    return "success"

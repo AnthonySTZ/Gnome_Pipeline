@@ -490,9 +490,11 @@ class MainWindow(QMainWindow):
     def export_event(self) -> None:
         dialog: ExportDialog = ExportDialog(self)
         dialog.exec_()
+        if dialog.result() != QDialog.DialogCode.Accepted:
+            return
+
         print(dialog.infos)
-        return
-        res: str = self.project.export_event()
+        res: str = self.project.export_maya(dialog.infos)
         if res == "success":
             QMessageBox.information(self, "Export", "Event exported successfully")
             return
