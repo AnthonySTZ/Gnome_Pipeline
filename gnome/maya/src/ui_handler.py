@@ -11,6 +11,8 @@ from PySide2.QtWidgets import (
     QListWidget,
     QTableWidgetItem,
     QAbstractItemView,
+    QSpacerItem,
+    QSizePolicy,
 )
 from PySide2.QtCore import Qt, QPoint
 from src.dialogs import (
@@ -54,13 +56,22 @@ class MainWindow(QMainWindow):
         self.resize(1400, 900)
 
         # Set central widget
-        self.main_layout: QHBoxLayout = QHBoxLayout()
-        self.main_widget: QWidget = QWidget()
-        self.main_widget.setLayout(self.main_layout)
-        self.setCentralWidget(self.main_widget)
-        self.main_widget.setStyleSheet(
+        self.vertical_layout: QVBoxLayout = QVBoxLayout()
+        self.vertical_layout.setSpacing(0)
+        self.vertical_layout.setContentsMargins(0, 0, 0, 0)
+        self.vertical_widget: QWidget = QWidget()
+        self.vertical_widget.setLayout(self.vertical_layout)
+        self.setCentralWidget(self.vertical_widget)
+        self.vertical_widget.setStyleSheet(
             """.QWidget { background-color: rgb(35, 35, 35);}"""  # Set background color
         )
+
+        self.main_layout: QHBoxLayout = QHBoxLayout()
+        self.main_layout.setSpacing(0)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_widget: QWidget = QWidget()
+        self.main_widget.setLayout(self.main_layout)
+        self.vertical_layout.addWidget(self.main_widget)
 
         # Setup entities UI
         self.setup_entities_ui()
@@ -70,6 +81,9 @@ class MainWindow(QMainWindow):
 
         # Setup Files UI
         self.setup_files_ui()
+
+        # Setup Export
+        self.create_export_button()
 
     def setup_entities_ui(self) -> None:
 
@@ -269,6 +283,40 @@ class MainWindow(QMainWindow):
             lambda position: create_list_context_menu(
                 self.files_table_widget, context_function, self, position
             )
+        )
+
+    def create_export_button(self) -> None:
+        self.export_layout: QHBoxLayout = QHBoxLayout()
+        self.export_widget: QWidget = QWidget()
+        self.vertical_layout.addWidget(self.export_widget)
+        self.export_widget.setLayout(self.export_layout)
+
+        spacer: QSpacerItem = QSpacerItem(
+            0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum
+        )
+        self.export_layout.addItem(spacer)
+
+        # Export Button
+        self.export_button: QPushButton = QPushButton("Export")
+        self.export_layout.addWidget(self.export_button)
+        self.export_button.setStyleSheet(
+            """
+            QPushButton {
+                background-color: rgb(80, 80, 80);
+                color: rgb(200, 200, 200);
+                border: 0;
+                border-radius : 5px;
+                padding: 10px;
+                padding-left: 30px;
+                padding-right: 30px;
+            }
+            QPushButton:hover {
+                background-color: rgb(50, 50, 50);
+            }
+            QPushButton:pressed {
+                background-color: rgb(80, 80, 80);
+            }
+            """
         )
 
     def setup_functional(self) -> None:
