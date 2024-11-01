@@ -493,7 +493,6 @@ class MainWindow(QMainWindow):
         if dialog.result() != QDialog.DialogCode.Accepted:
             return
 
-        print(dialog.infos)
         res: str = self.project.export_maya(dialog.infos)
         if res == "success":
             QMessageBox.information(self, "Export", "Event exported successfully")

@@ -142,8 +142,8 @@ def export(file_path: str, filename: str, format: str, export_selection: bool) -
 
         # Specify the file output path
         export_cmd += " -file '" + full_path + "'"
-        print(export_cmd)
         cmds.AbcExport(j=export_cmd)
+
     if format == ".usda":
         if not cmds.pluginInfo("mayaUsdPlugin", query=True, loaded=True):
             cmds.loadPlugin("mayaUsdPlugin")
