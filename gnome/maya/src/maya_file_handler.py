@@ -155,4 +155,4 @@ def export(file_path: str, filename: str, format: str, export_selection: bool) -
         }
         cmds.mayaUSDExport(**export_options)
 
-    return "success"
+    return full_path
