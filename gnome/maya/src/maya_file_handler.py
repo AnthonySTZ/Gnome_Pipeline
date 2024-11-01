@@ -1,6 +1,7 @@
 import os
 import maya.cmds as cmds
 import json
+from PySide2.QtWidgets import QMessageBox
 
 
 def create_maya_project(project_path):
@@ -62,3 +63,44 @@ def add_comment_to_file(file_path: str, version: int, comment: str) -> None:
     data[version] = {"comment": comment}
     with open(file_path, "w") as f:
         json.dump(data, f)
+
+
+def open_maya_scene(file_path: str):
+    if cmds.file(q=True, modified=True):
+        res: str = cmds.confirmDialog(
+            title="Unsaved Changes",
+            message="You have unsaved changes. Do you want to save them?",
+            button=["Save", "Discard", "Cancel"],
+            defaultButton="Save",
+            cancelButton="Cancel",
+            dismissString="Cancel",
+        )
+        if res == "Save":
+            current_scene: str = cmds.file(q=True, sceneName=True)
+            if current_scene:
+                cmds.file(save=True)
+            else:
+                save_path = cmds.fileDialog2(
+                    fileFilter="Maya Binary (*.mb);;Maya ASCII (*.ma)",
+                    dialogStyle=2,
+                    fileMode=0,
+                )
+                if save_path:
+                    cmds.file(rename=save_path[0])
+                    cmds.file(save=True, type="mayaBinary")
+                else:
+                    return  # User cancelled the save as dialog
+        elif res == "Cancel":
+            return
+        elif res == "Discard":
+            try:
+                cmds.file(file_path, open=True, force=True)
+                return
+            except RuntimeError as e:
+                QMessageBox.warning("Error", str(e))
+                return
+
+    try:
+        cmds.file(file_path, open=True)
+    except RuntimeError as e:
+        QMessageBox.warning("Error", str(e))

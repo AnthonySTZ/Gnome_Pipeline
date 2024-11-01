@@ -279,6 +279,7 @@ class MainWindow(QMainWindow):
 
         self.entities_list.itemClicked.connect(self.update_departments)
         self.departments_list.itemClicked.connect(self.update_files)
+        self.files_table_widget.cellDoubleClicked.connect(self.files_double_clicked)
 
     def handle_assets_radio_btn_clicked(self) -> None:
         self.shots_radio_btn.setChecked(False)
@@ -348,13 +349,15 @@ class MainWindow(QMainWindow):
         department_selected: str = self.get_department()
         if not department_selected:
             return
-        files: list[dict[str, str]] = self.project.get_files(
+        self.files: list[dict[str, str]] = self.project.get_files(
             entity_type, entities_selected, department_selected
         )
 
-        files = sorted(files, key=lambda file: file["version"])  # Sort files by version
-        self.files_table_widget.setRowCount(len(files))
-        for i, file_info in enumerate(files):
+        self.files = sorted(
+            self.files, key=lambda file: file["version"]
+        )  # Sort files by version
+        self.files_table_widget.setRowCount(len(self.files))
+        for i, file_info in enumerate(self.files):
             software: str = file_info["software"]
             version: str = file_info["version"]
             comment: str = file_info["comment"]
@@ -428,3 +431,6 @@ class MainWindow(QMainWindow):
             self.project.project_path, entity_type, entity_name, department_name
         )
         subprocess.Popen('explorer "' + path + '"')
+
+    def files_double_clicked(self, row: int, column: int) -> None:
+        self.project.open_file(self.files[row])

@@ -1,5 +1,5 @@
 import os
-from src.maya_file_handler import save_maya_file
+from src.maya_file_handler import save_maya_file, open_maya_scene
 import time
 import json
 
@@ -93,6 +93,12 @@ class ProjectHandler:
                     "version": file_version,
                     "comment": comment,
                     "date": file_date,
+                    "path": file_path,
                 }
                 files.append(file_infos)
         return files
+
+    def open_file(self, file: dict[str, str]):
+        software: str = file["software"]
+        if software == "maya":
+            open_maya_scene(file["path"])
