@@ -132,14 +132,15 @@ def export(file_path: str, filename: str, format: str, export_selection: bool) -
     full_path = os.path.join(
         file_path, filename + "v" + str(version).zfill(4) + format
     ).replace("\\", "/")
-    export_cmd = "-frameRange 1 1"
+    if format == ".abc":
+        export_cmd = "-frameRange 1 1"
 
-    # Add each root object's path to the export command
-    for obj in selected_objects:
-        export_cmd += " -root " + obj
+        # Add each root object's path to the export command
+        for obj in selected_objects:
+            export_cmd += " -root " + obj
 
-    # Specify the file output path
-    export_cmd += " -file '" + full_path + "'"
-    print(export_cmd)
-    cmds.AbcExport(j=export_cmd)
+        # Specify the file output path
+        export_cmd += " -file '" + full_path + "'"
+        print(export_cmd)
+        cmds.AbcExport(j=export_cmd)
     return "success"
