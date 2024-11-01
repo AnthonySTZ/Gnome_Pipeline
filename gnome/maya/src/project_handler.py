@@ -30,24 +30,22 @@ class ProjectHandler:
         entities_path = os.path.join(self.project_path, entities_type)
         if not os.path.exists(entities_path):
             return []
-        entities = [
-            f
-            for f in os.listdir(entities_path)
-            if os.path.isdir(os.path.join(entities_path, f))
-        ]
+        entities = []
+        for dir in os.listdir(entities_path):
+            if not os.path.isdir(os.path.join(entities_path, dir)):
+                continue
+            entities.append(dir)
         return entities
 
     def get_departments(self, entity_type: str, entity_name: str) -> list[str]:
         department_path = os.path.join(self.project_path, entity_type, entity_name)
         if not os.path.exists(department_path):
             return []
-        departments = [
-            [
-                f
-                for f in os.listdir(department_path)
-                if os.path.isdir(os.path.join(department_path, f))
-            ]
-        ]
+        departments = []
+        for dir in os.listdir(department_path):
+            if not os.path.isdir(os.path.join(department_path, dir)):
+                continue
+            departments.append(dir)
         return departments
 
     def create_new_version(
