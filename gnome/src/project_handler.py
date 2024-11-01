@@ -35,7 +35,11 @@ class ProjectHandler:
         department_path = os.path.join(self.project_path, entity_type, entity_name)
         if not os.path.exists(department_path):
             return []
-        departments = [f for f in os.listdir(department_path)]
+        departments = []
+        for f in os.listdir(department_path):
+            if not os.path.isdir(os.path.join(department_path, f)):
+                continue
+            departments.append(f)
         return departments
 
     def get_files(
@@ -48,6 +52,8 @@ class ProjectHandler:
         files: list[dict[str, str]] = []
         for dir in os.listdir(files_path):
             if not os.path.isdir(os.path.join(files_path, dir)):
+                continue
+            if dir not in self.software_path:
                 continue
             scenes_path = os.path.join(files_path, dir, self.software_path[dir])
             if not os.path.exists(scenes_path):
