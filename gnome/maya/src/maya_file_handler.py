@@ -123,12 +123,13 @@ def export(file_path: str, filename: str, format: str, export_selection: bool) -
         selected_objects = cmds.ls(assemblies=True)
 
     # Check version
-    version = 1
+    version = 0
     for file in os.listdir(file_path):
         if file.startswith(filename):
-            version_number = int(file[len(filename) + 1 : -3])
+            version_number = int(file[len(filename) + 1 : len(filename) + 1 + 4])
             if version_number > version:
                 version = version_number
+    version += 1
     full_path = os.path.join(
         file_path, filename + "v" + str(version).zfill(4) + format
     ).replace("\\", "/")
@@ -143,4 +144,15 @@ def export(file_path: str, filename: str, format: str, export_selection: bool) -
         export_cmd += " -file '" + full_path + "'"
         print(export_cmd)
         cmds.AbcExport(j=export_cmd)
+    if format == ".usda":
+        if not cmds.pluginInfo("mayaUsdPlugin", query=True, loaded=True):
+            cmds.loadPlugin("mayaUsdPlugin")
+
+        export_options = {
+            "file": full_path,
+            "selection": False,
+            "exportRoots": selected_objects,
+        }
+        cmds.mayaUSDExport(**export_options)
+
     return "success"
