@@ -14,7 +14,9 @@ def run() -> None:
     import src.ui_handler as ui_handler
     import src.dialogs as dialogs
     import src.maya_file_handler as maya_file_handler
+    import src.usd_handler as usd_handler
 
+    reload(usd_handler)
     reload(maya_file_handler)
     reload(dialogs)
     reload(project_handler)

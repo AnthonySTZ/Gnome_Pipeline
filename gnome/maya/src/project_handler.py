@@ -2,7 +2,7 @@ import os
 from src.maya_file_handler import save_maya_file, open_maya_scene, get_scene, export
 import time
 import json
-from usd_handler import create_new_stage, save_stage, add_layer
+from src.usd_handler import create_new_stage, save_stage, add_layer
 
 
 class ProjectHandler:
@@ -135,10 +135,11 @@ class ProjectHandler:
             return "No Selected"
 
         full_export_path: str = res
-        stage, path = create_new_stage(usd_path, infos["entity_name"])
-        add_layer(stage, full_export_path)
-        save_stage(stage)
-        return res
+        if export_infos["usd"]:
+            stage, stage_path = create_new_stage(usd_path, infos["entity_name"])
+            add_layer(stage.GetRootLayer(), full_export_path)
+            save_stage(stage)
+        return "success"
 
     def get_file_project_infos(self, file_path: str) -> dict[str, str]:
         infos: dict[str, str] = {}
