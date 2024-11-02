@@ -29,3 +29,17 @@ You can add a department to an entity by right clicking on the departments recta
 Then you can choose the department in the list available.
 
 ![CreateDep](/readme/choose_department.jpg)
+
+### GNOME in Maya
+
+To Save a maya scene in Gnome, you have to select the entity and department and then right click on the files rectangle and select Create a new version from current.
+
+![CreateScene](/readme/create_scene.png)
+
+You can add a comment.
+
+![CreateScene](/readme/comment.png)
+
+Then click create !
+
+![MayaSaved](/readme/saved_maya.png)

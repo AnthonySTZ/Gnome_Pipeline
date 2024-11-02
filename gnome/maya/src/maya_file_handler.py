@@ -39,8 +39,9 @@ def create_maya_project(project_path):
 
 
 def save_maya_file(path: str, filename: str, comment: str) -> None:
-    version = 1
+    version = 0
     file_path = os.path.join(path, "scenes")
+    create_maya_project(path)
 
     for file in os.listdir(file_path):
         if file.startswith(filename) and (file.endswith(".ma") or file.endswith(".mb")):
@@ -48,7 +49,6 @@ def save_maya_file(path: str, filename: str, comment: str) -> None:
             if version_number > version:
                 version = version_number
     version += 1
-    create_maya_project(path)
     filename += "v" + str(version).zfill(4)
     scene_path = os.path.join(file_path, filename)
     cmds.file(rename=scene_path)
@@ -58,6 +58,10 @@ def save_maya_file(path: str, filename: str, comment: str) -> None:
 
 
 def add_comment_to_file(file_path: str, version: int, comment: str) -> None:
+    if not os.path.exists(file_path):
+        data = {}
+        with open(file_path, "w") as f:
+            json.dump(data, f)
     with open(file_path, "r") as f:
         data = json.load(f)
     data[version] = {"comment": comment}
