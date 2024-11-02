@@ -38,7 +38,7 @@ To Save a maya scene in Gnome, you have to select the entity and department and 
 
 You can add a comment.
 
-![CreateScene](/readme/comment.png)
+![CreateScene](/readme/comment.jpg)
 
 Then click create !
 
