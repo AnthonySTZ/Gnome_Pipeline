@@ -43,3 +43,13 @@ You can add a comment.
 Then click create !
 
 ![MayaSaved](/readme/saved_maya.png)
+
+### Export
+
+You can export asset from maya using the export button.
+
+![MayaSaved](/readme/export.png)
+
+Then select the format, selected only and if you want to add the exported asset to his USD layer.
+
+![CreateScene](/readme/export_settings.jpg)
